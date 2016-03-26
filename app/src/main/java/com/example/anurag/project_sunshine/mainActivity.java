@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -78,6 +79,16 @@ public class mainActivity extends AppCompatActivity {
             };
             List<String> weekForecast = new ArrayList<String>(
                     Arrays.asList(forecastArray));
+            
+            mForecastAdapter = new ArrayAdapter<String>(
+                    // Four params are passed first to get the appliction context
+                    getActivity(),
+                    // to get the layout of list
+                    R.layout.list_item_forecast,
+                    // to get the id of the textview
+                    R.id.list_item_forecast_textview,
+                    //finally the data to populate
+                    forecastArray);
 
             return rootView;
         }
