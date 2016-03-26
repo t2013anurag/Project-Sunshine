@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -60,12 +61,14 @@ public class mainActivity extends AppCompatActivity {
      */
     public static class PlaceholderFragment extends Fragment {
 
+        ArrayAdapter<String> mForecastAdapter;
         public PlaceholderFragment() {
         }
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
+
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
             String[] forecastArray = {
@@ -79,9 +82,9 @@ public class mainActivity extends AppCompatActivity {
             };
             List<String> weekForecast = new ArrayList<String>(
                     Arrays.asList(forecastArray));
-            
+
             mForecastAdapter = new ArrayAdapter<String>(
-                    // Four params are passed first to get the appliction context
+                    // Four params are passed first to get the application context
                     getActivity(),
                     // to get the layout of list
                     R.layout.list_item_forecast,
@@ -90,6 +93,9 @@ public class mainActivity extends AppCompatActivity {
                     //finally the data to populate
                     forecastArray);
 
+
+            ListView listView = (ListView) rootView.findViewById(R.id.listview_forecast);
+            listView.setAdapter(mForecastAdapter);
             return rootView;
         }
     }
