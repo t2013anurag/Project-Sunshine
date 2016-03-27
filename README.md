@@ -4,7 +4,8 @@
 Create Project Sunshine 
 
 v1.0 : 
-Hello World
+* Hello World Sample Content Printed.
+* Updated with Fake Data of Weather.
 
 v1.1 : 
 * Connected the app to OpenWeather API.
