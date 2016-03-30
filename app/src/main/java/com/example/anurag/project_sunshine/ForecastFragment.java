@@ -5,9 +5,11 @@ package com.example.anurag.project_sunshine;
  */
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.text.format.Time;
 import android.util.Log;
@@ -67,14 +69,27 @@ public class ForecastFragment extends Fragment {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_refresh) {
-            FetchWeatherTask weatherTask = new FetchWeatherTask();
-            weatherTask.execute("632014");
+           updateWeather();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
+    private void updateWeather() {
+        FetchWeatherTask weatherTask = new FetchWeatherTask();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String location = prefs.getString(getString(R.string.pref_location_key),
+                getString(R.string.pref_location_default));
+
+        weatherTask.execute(location);
+    }
+
+    @Override
+        public  void onStart() {
+        super.onStart();
+        updateWeather();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -82,18 +97,18 @@ public class ForecastFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        String[] forecastArray = {
-                "Today - Sunny - 88/63",
-                "Tomorrow - Foggy - 70/40",
-                "Weds - Cloudy - 72/63",
-                "Thurs - Asteroids - 75/65",
-                "Fri - Heavy Rain - 65/56",
-                "Sat - Help trapped in weather station - 60/51",
-                "Sun - Sunny - 80/68"
-        };
-        List<String> weekForecast = new ArrayList<String>(
-                Arrays.asList(forecastArray));
-
+//        String[] forecastArray = {
+//                "Today - Sunny - 88/63",
+//                "Tomorrow - Foggy - 70/40",
+//                "Weds - Cloudy - 72/63",
+//                "Thurs - Asteroids - 75/65",
+//                "Fri - Heavy Rain - 65/56",
+//                "Sat - Help trapped in weather station - 60/51",
+//                "Sun - Sunny - 80/68"
+//        };
+//        List<String> weekForecast = new ArrayList<String>(
+//                Arrays.asList(forecastArray));
+//
         mForecastAdapter = new ArrayAdapter<String>(
                 // Four params are passed first to get the application context
                 getActivity(),
@@ -102,7 +117,7 @@ public class ForecastFragment extends Fragment {
                 // to get the id of the textview
                 R.id.list_item_forecast_textview,
                 //finally the data to populate
-                weekForecast);
+                new ArrayList<String>());
 
 
         ListView listView = (ListView) rootView.findViewById(R.id.listview_forecast);
@@ -129,11 +144,19 @@ public class ForecastFragment extends Fragment {
         private String getReadableDateString(long time) {
             // The API returns a unix timestamp (measured in seconds),
             // it must be converted to milliseconds in order to be converted to valid date.
+
             SimpleDateFormat shortendDateFormat = new SimpleDateFormat("EEE MM dd");
             return shortendDateFormat.format(time);
         }
 
-        private String formatHighLows(double high, double low) {
+        private String formatHighLows(double high, double low, String unitType) {
+
+            if(unitType.equals(getString(R.string.pref_units_imperial))) {
+                high = (high * 1.8) + 32;
+                low = (low * 1.8) + 32;
+            } else if(unitType.equals(getString(R.string.pref_units_metric))) {
+                Log.d(LOG_TAG, "Unit type not found: " + unitType);
+            }
             long roundedHigh = Math.round(high);
             long roundedLow = Math.round(low);
             String highLowStr = roundedHigh + "/" + roundedLow;
@@ -176,6 +199,12 @@ public class ForecastFragment extends Fragment {
             dayTime = new Time();
 
             String[] resultStr = new String[numDays];
+
+            SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            String unitType = sharedPrefs.getString(
+                    getString(R.string.pref_units_key),
+                    getString(R.string.pref_units_metric));
+
             for (int i=0; i<weatherArray.length(); i++) {
                 // For now, using the format "Day, description, hi/low"
                 String day;
@@ -200,7 +229,7 @@ public class ForecastFragment extends Fragment {
                 double high = temperatureObject.getDouble(OWM_MAX);
                 double low = temperatureObject.getDouble(OWM_MIN);
 
-                highAndLow = formatHighLows(high, low);
+                highAndLow = formatHighLows(high, low, unitType);
                 resultStr[i] = day + " - " + description + " - " + highAndLow;
 
             }
