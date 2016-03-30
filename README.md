@@ -24,3 +24,11 @@ v1.3 :
   
   Settings for Getting users pincode/zipcode.
   Settings for temperature units conversion to metric or imperial
+  
+v1.4 : 
+  
+  View location on Map
+  
+v1.5 : 
+ 
+  Share on other App the current weather data
