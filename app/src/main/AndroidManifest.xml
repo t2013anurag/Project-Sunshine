@@ -38,6 +38,9 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.anurag.project_sunshine.mainActivity" />
         </activity>
+        <provider
+            android:authorities="com.example.anurag.project_sunshine"
+            android:name=".data.WeatherProvider" />
     </application>
 
 </manifest>
