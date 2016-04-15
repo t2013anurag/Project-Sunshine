@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/t2013anurag/Project-Sunshine.svg?branch=master)](https://travis-ci.org/t2013anurag/Project-Sunshine)
 # Project Sunshine (Udacity Nanodegree)
 
 
